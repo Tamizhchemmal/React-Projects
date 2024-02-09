@@ -107,3 +107,7 @@
 .selected {
   text-decoration: line-through;
 }
+
+.btn-dlt {
+  cursor: pointer;
+}

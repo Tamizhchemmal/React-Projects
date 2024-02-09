@@ -1,38 +1,22 @@
 import { useState } from "react";
 import "./App.css";
 
-const Lists = [
-  {
-    id: 1,
-    item: "Book",
-    quantity: 3,
-    packed: true,
-  },
-  {
-    id: 2,
-    item: "Glass",
-    quantity: 2,
-    packed: false,
-  },
-  {
-    id: 3,
-    item: "Sandal",
-    quantity: 4,
-    packed: true,
-  },
-  {
-    id: 4,
-    item: "Sunscreen",
-    quantity: 1,
-    packed: false,
-  },
-];
 export default function App() {
+  const [itemList, setItemList] = useState([]);
+
+  function handleItems(item) {
+    setItemList((items) => [...items, item]);
+  }
+
+  function handleDelete(id) {
+    setItemList((items) => items.filter((item) => item.id !== id));
+  }
+
   return (
     <>
       <Header />
-      <Form />
-      <Planlist />
+      <Form handleItems={handleItems} />
+      <Planlist itemList={itemList} handleDelete={handleDelete} />
       <Footer />
     </>
   );
@@ -48,14 +32,18 @@ function Header() {
   );
 }
 
-function Form() {
+function Form({ handleItems }) {
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(1);
 
   function handlesubmit(e) {
     e.preventDefault();
-    var addItem = { item: item, quantity: quantity, packed: false };
-    console.log(addItem);
+
+    if (!item) return;
+    var addItem = { item, quantity, packed: false, id: Date.now() };
+    handleItems(addItem);
+    setItem("");
+    setQuantity(1);
   }
 
   return (
@@ -86,16 +74,18 @@ function Form() {
   );
 }
 
-function Planlist() {
+function Planlist({ itemList, handleDelete }) {
   return (
     <>
       <div className="listsection">
-        {Lists.map((list) => (
+        {itemList.map((list) => (
           <li key={list.id}>
             <span className={list.packed ? "selected" : ""}>
               {list.quantity} {list.item}
             </span>
-            <button>❌</button>
+            <button className="btn-dlt" onClick={() => handleDelete(list.id)}>
+              ❌
+            </button>
           </li>
         ))}
       </div>
