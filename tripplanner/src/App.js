@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 
 const Lists = [
@@ -48,19 +49,36 @@ function Header() {
 }
 
 function Form() {
+  const [item, setItem] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
+  function handlesubmit(e) {
+    e.preventDefault();
+    var addItem = { item: item, quantity: quantity, packed: false };
+    console.log(addItem);
+  }
+
   return (
     <>
-      <form>
+      <form onSubmit={handlesubmit}>
         <div className="listInput">
           <h2>Hey Add items here, so that you wont Forget 😉</h2>
-          <select className="itemcount">
+          <select
+            className="itemcount"
+            value={quantity}
+            onChange={(e) => setQuantity(Number(e.target.value))}
+          >
             {Array.from({ length: 10 }, (a, i) => i + 1).map((num) => (
               <option value={num} key={num}>
                 {num}
               </option>
             ))}
           </select>
-          <input placeholder="Items"></input>
+          <input
+            placeholder="Items"
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
+          ></input>
           <button>Add</button>
         </div>
       </form>
@@ -73,7 +91,7 @@ function Planlist() {
     <>
       <div className="listsection">
         {Lists.map((list) => (
-          <li>
+          <li key={list.id}>
             <span className={list.packed ? "selected" : ""}>
               {list.quantity} {list.item}
             </span>
