@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import "./App.css";
 import logo from "./media/icons8-movie-64.png";
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import { useState } from "react";
 const movieData = [
   {
     Poster:
@@ -45,10 +47,25 @@ const movieData = [
 ];
 
 export default function App() {
+  const [movies, setMovies] = useState([]);
+
+  const search = "interstellar";
+  useEffect(function () {
+    async function fetchdata() {
+      await fetch(`http://www.omdbapi.com/?apikey=4f2ff70a&s=${search}`)
+        .then((data) => data.json())
+        .then((movieslist) => setMovies(movieslist.Search));
+    }
+    fetchdata();
+  }, []);
+
+  console.log(movies);
   return (
     <>
-      <Navbar />
-      <Main />
+      <div className="box">
+        <Navbar />
+        <Main movies={movies} />
+      </div>
     </>
   );
 }
@@ -56,7 +73,7 @@ export default function App() {
 function Navbar() {
   return (
     <>
-      <div className="navbar-div">
+      <div className="navbar-div container">
         <Logo />
         <Search />
         <ResultCount />
@@ -65,21 +82,27 @@ function Navbar() {
   );
 }
 
-function Main() {
+function Main({ movies }) {
   return (
     <>
       <div className="main-div">
-        <MovieList />
+        <MovieList movies={movies} />
         <WatchListBox />
       </div>
     </>
   );
 }
 
-function MovieList() {
+function MovieList({ movies }) {
   return (
     <>
-      <div className="movielist-div"></div>
+      <div className="movielist-div">
+        <ul>
+          {movies?.map((movie) => (
+            <li key={movie.imdbID}>{movie.Title}</li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 }
